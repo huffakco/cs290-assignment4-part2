@@ -1,4 +1,5 @@
 <?php
+include 'errReport.php';
 // Interact with the database
 // get new requests
 
@@ -22,36 +23,61 @@ function checkNameUnique($name) {
   return(true);
 }
 
+// function to get all unique categories from the database
+// returns an array of categories
+function getDistinctCategories($category) {
+  // get list of categories from database
+  if ($videos = $mysqli->query("SELECT DISTINCT category FROM videoLibrary")) {
+    echo "Query failed: (" . $stmt->errno . ") " . $stmt->error;
+    return(false);
+  }
+ 
+  $index = 0;
+  while ($cat = $videos->fetch()) {
+    $category[$index] = $cat;
+    $index++;
+  }  
+  
+  return($category);
+}
 
 
 
 // Get input variables
-function getInputs() {
+function getName() {
   if ((isset($_REQUEST["name"]))) {
     $name = $_REQUEST["name"];
   } else {
-    $name = "";
+    $name = "invalid";
   }
-    
+}
+
+function getCat() {    
   if ((isset($_REQUEST["category"]))) {
     $category = $_REQUEST["category"];
   } else {
     $category = "unassigned";
   }
-  
+  return ($category);
+}
+
+function getLength() {
   if ((isset($_REQUEST["length"]))) {
     $length = parseInt($_REQUEST["length"]);
   } else {
     $length = 0;
   }
-
-  if ((isset($_REQUEST["rented"]))) {
-    $rented = parseInt($_REQUEST["rented"]);
-  } else {
-    $rented = TRUE;
-  }  
+  return ($length);
 }
 
+function getRented() {
+  if ((isset($_REQUEST["rented"]))) {
+    if ($_REQUEST["rented"] === 'TRUE') {
+       return(TRUE);
+    }
+  }
+  return(FALSE);
+}
 
 // add multiple parameters to this function
 // Setup the prepare statement for inserting a properly formatted video
@@ -85,21 +111,65 @@ else {
   $req = $_REQUEST["rtype"];
   switch $req
   {
-    case($req === 'checkin')  
-    // get name from request change rented to true
-    break;
-    case ($req === 'checkout')
-    // get name from request, change rented to false
-    break;
-    case ($req === 'insert')
-    break;
-    case ($req === 'deleteRow')
-    break;
-    case ($req === 'deleteAll')
-    break;
-    default
-      echo "";
+    case('checkin')  
+      // get name from request change rented to true
+      $name = getName();
+      $rented = FALSE;
+      toggleRented($name, $rented);
+      break;
+    case ('checkout'):
+      // get name from request, change rented to false
+      $name = getName();
+      $rented = TRUE;
+      toggleRented($name, $rented);
+      break;
+    case ('getNames'):
+      // get the list of video names, return array of names
+      $name = getName();
+      $result = checkNameUnique($name);
+      // return $result to the requestor
+      
+      break;
+    case ('insert'):
+      // insert data provided into database
+      $name = getName();
+      $category = getCat();
+      $length = getLength();
+      $rented = getRented();
+      $result = insertVideoData($name, $category, $length, $rented);
+      // return $result to the requestor
+      
+      break;
+    case ('deleteRow'):
+      // get name from request, delete the row
+      $name = getName();
+      $result = deleteRow($name);
+      // return $result to the requestor
+      break;
+    case ('deleteAll'):
+      // delete all the rows in the database
+      $result = deleteAllRows($name);
+      // return $result to the requestor
+
+      break;
+    case ('getCategories'):
+      // get the list of distinct categories, return array of categories
+      $category = getCat();
+      $result = getDistinctCategories($category);
+      // stringify the array
+      
+      // return $result to the requestor (should be array of categories)
+
+      break;
+    case ('getVideoList'):
+      // get categories
+      $category = getCat();
+      $result = getVideoListByCategory($category);
+      // return $result to the requestor (should be array of objects)
+      
+    default:
+      echo "<br>SOMETHING WENT TERRIBLY WRONG, unknown request<bre>";
   }
-  }
+}
 
 ?>
