@@ -112,13 +112,13 @@ else {
   switch $req
   {
     case('checkin')  
-      // get name from request change rented to true
+      // get name from request change rented to false
       $name = getName();
       $rented = FALSE;
       toggleRented($name, $rented);
       break;
     case ('checkout'):
-      // get name from request, change rented to false
+      // get name from request, change rented to true
       $name = getName();
       $rented = TRUE;
       toggleRented($name, $rented);
