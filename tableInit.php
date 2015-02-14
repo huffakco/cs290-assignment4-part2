@@ -87,25 +87,25 @@ echo "<br>";
   // Build video object
   // Reference:
   // http://php.net/manual/en/language.types.object.php
-// class VideoObject
-// {
-  // public $id;
-  // public $name;
-  // public $category;
-  // public $length;
-  // public $rented;
+class VideoObject
+{
+  public $id;
+  public $name;
+  public $category;
+  public $length;
+  public $rented;
   
 
-  // //params is an array of key->value pairs
-  // public function _constructVideoObject($param) {
-    // $this->id = $param[id];
-    // $this->name = $param[name];
-    // $this->category = $param[category];
-    // $this->length = $param[length];
-    // $this->rented = $param[rented];
-  // }
+  //params is an array of key->value pairs
+  public function _constructVideoObject($param) {
+    $this->id = $param[id];
+    $this->name = $param[name];
+    $this->category = $param[category];
+    $this->length = $param[length];
+    $this->rented = $param[rented];
+  }
 
-// }
+}
   
   // $video1 = array(
     // name => 'Veggie Tales4';
@@ -150,7 +150,7 @@ echo "<br>";
  
  insertVideoData($mysqli, 1, 'Veggie Tales 1', 'Family', 90, FALSE);
  insertVideoData($mysqli, 2, 'Veggie Tales 2', 'Family', 90, TRUE);
- insertVideoData($mysqli, 3, 'Veggie Tales 3', 'Family', 90, FALSE);
+ insertVideoData($mysqli, 3, 'Veggie Tales 3', 'Comedy', 90, FALSE);
  insertVideoData($mysqli, 6, 'Veggie Tales 6', 'Family', 90, TRUE);
 
 function insertVideoData($mysqli, $id, $name, $category, $length, $rented) {
@@ -165,7 +165,6 @@ function insertVideoData($mysqli, $id, $name, $category, $length, $rented) {
   }
   
   /* Prepared statement, stage 2: bind and execute */
-
   if (!$stmt->bind_param("issii", $id,$name, $category, $length, $rented)) {
     echo "Binding parameters failed: (" . $stmt->errno . ") " . $stmt->error;
   }
@@ -255,60 +254,130 @@ function getNextId($mysqli) {
   return ($id);
 }
   
+  
+$categories = getDistinctCategories($mysqli);
+for ($ii = 0; $ii < sizeof($categories); $ii++) {
+  echo "<br>List category: ".$categories[$ii];
+}
 
-// Reference:
-// http://stackoverflow.com/questions/7604893/sql-select-row-from-table-where-id-maxid
-// SQL Syntax:
-//SELECT category 
-//FROM table 
-//WHERE DISTINCT category
-//)
-
-$categories = getCategories($mysqli);
-// foreach $categories as $value {
-  // echo "<br>".$value;
-// }
-function getCategories($mysqli) {
-  // Note this works because id is a primary key
-  $sql = "SELECT DISTINCT category FROM videoLibrary";
-
+function getDistinctCategories($mysqli) {
+  // Get the distinct elements from video Library
   // prepare statement
   //Reference: 
   // /PHP%20%20Prepared%20Statements%20-%20Manual.html
   /* Prepared statement, stage 1: prepare */
+  $sql = "SELECT DISTINCT category FROM videoLibrary";
   if ($stmt = $mysqli->prepare($sql)) {
     echo "success";
   }
   
   /* Prepared statement, stage 2: bind and execute */
-  // No parameters to bind
-
+  
   if (!$stmt->execute()) {
       echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
   } 
   
   // bind result
-  if ($stmt->bind_result($category)) {
+  if ($stmt->bind_result($result)) {
     echo "success";
   } 
-  
  
-  
   // get result
   $idx = 0;
   while ($stmt->fetch()) {
-        $categories[$idx] = $category;
-        echo "Category:" . $category;
+        $array[$idx] = $result;
+        echo "<br>Result:" . $result;
         $idx++;
   }
  
   // explicit close of prepared statement
   $stmt->close();
-  return ($category);
+  return ($array);
 }
   
+
+$names = getNames($mysqli);
+for ($ii = 0; $ii < sizeof($names); $ii++) {
+  echo "<br>List names: ".$names[$ii];
+}
+
+function getNames($mysqli) {
+  // Get the name elements from video Library
+  // prepare statement
+  //Reference: 
+  // /PHP%20%20Prepared%20Statements%20-%20Manual.html
+  /* Prepared statement, stage 1: prepare */
+  $sql = "SELECT name FROM videoLibrary";
+  if ($stmt = $mysqli->prepare($sql)) {
+    echo "success";
+  }
   
+  /* Prepared statement, stage 2: bind and execute */
   
+  if (!$stmt->execute()) {
+      echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
+  } 
+  
+  // bind result
+  if ($stmt->bind_result($result)) {
+    echo "success";
+  } 
+ 
+  // get result
+  $idx = 0;
+  while ($stmt->fetch()) {
+        $array[$idx] = $result;
+        echo "<br>Result:" . $result;
+        $idx++;
+  }
+ 
+  // explicit close of prepared statement
+  $stmt->close();
+  return ($array);
+}
+  
+
+
+$videos = getAllVideos($mysqli);
+for ($ii = 0; $ii < sizeof($videos); $ii++) {
+  echo "<br>List video names: ".$videos[$ii]['name'];
+}
+
+function getAllVideos($mysqli) {
+  // Get the name elements from video Library
+  // prepare statement
+  //Reference: 
+  // /PHP%20%20Prepared%20Statements%20-%20Manual.html
+  /* Prepared statement, stage 1: prepare */
+  $sql = "SELECT id, name, category, length, rented FROM videoLibrary";
+  if ($stmt = $mysqli->prepare($sql)) {
+    echo "success";
+  }
+  
+  /* Prepared statement, stage 2: bind and execute */
+  
+  if (!$stmt->execute()) {
+      echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
+  } 
+  
+  // bind result
+  if ($stmt->bind_result($id,$name,$category,$length,$rented)) {
+    echo "success";
+  } 
+ 
+  // get result
+  $idx = 0;
+  while ($stmt->fetch()) {
+        $tmpObj[$idx] = array('id'=>$id,'name'=>$name,'category'=>$category,'length'=>$length,'rented'=>$rented);
+        $nameArr[$idx] = $name;
+        echo "<br>Result:" . $name;
+        $idx++;
+  }
+ 
+  // explicit close of prepared statement
+  $stmt->close();
+  return ($tmpObj);
+}
   
 deleteVideo($mysqli,6);
   
@@ -324,9 +393,4 @@ deleteVideo($mysqli,6);
     }
 }
 
-
-  
-  
- echo "mysqli is true";
-//}
 ?>
