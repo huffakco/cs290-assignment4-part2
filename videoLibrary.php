@@ -25,9 +25,6 @@ if ($mysqli) {
  insertVideoData($mysqli, 3, 'Veggie Tales 3', 'Comedy', 90, FALSE);
  insertVideoData($mysqli, 6, 'Veggie Tales 6', 'Family', 90, TRUE);
 
- 
-toggleRentedVideo($mysqli,1,TRUE);
-
 echo "<br>ID: ".getNextId($mysqli);
 
   
@@ -36,7 +33,6 @@ for ($ii = 0; $ii < sizeof($categories); $ii++) {
   echo "<br>List category: ".$categories[$ii];
 }
  
-
 $names = getNames($mysqli);
 for ($ii = 0; $ii < sizeof($names); $ii++) {
   echo "<br>List names: ".$names[$ii];
@@ -49,7 +45,7 @@ for ($ii = 0; $ii < sizeof($videos); $ii++) {
 }
 
   
-deleteVideo($mysqli,6);
+
 
 
 
@@ -97,72 +93,72 @@ function getRented() {
   return(FALSE);
 }
 
-// if (!(isset($_REQUEST["rtype"])) {
+//if (!(isset($_REQUEST["rtype"])) {
   // echo "SOMETHING WENT TERRIBLY WRONG! Request to database not valid!";
 // }
 // else {
   // $req = $_REQUEST["rtype"];
-  // switch $req
-  // {
-    // case('checkin')  
-      // // get name from request change rented to false
-      // $name = getName();
-      // $rented = FALSE;
-      // toggleRented($name, $rented);
-      // break;
-    // case ('checkout'):
-      // // get name from request, change rented to true
-      // $name = getName();
-      // $rented = TRUE;
-      // toggleRented($name, $rented);
-      // break;
-    // case ('getNames'):
-      // // get the list of video names, return array of names
-      // $name = getName();
-      // $result = checkNameUnique($name);
-      // // return $result to the requestor
+  $req = 'insert';
+  $reqId = 1;
+  
+
+
+  switch ($req)
+  {
+    case('checkin'):
+      // get name from request change rented to false
+      //$reqId = getId();
       
-      // break;
-    // case ('insert'):
+      $result = toggleRentedVideo($mysqli, $reqId, FALSE);
+      break;
+    case ('checkout'):
+      // get name from request, change rented to true
+      // $reqId = getId();
+      $result = toggleRentedVideo($mysqli, $reqId, TRUE);
+      break;
+    case ('getNames'):
+      // get the list of video names, return array of names
+      $names = getNames($mysqli);
+      for ($ii = 0; $ii < sizeof($names); $ii++) {
+          echo "<br>List names: ".$names[$ii];
+      }
+      break;
+    case ('insert'):
       // // insert data provided into database
       // $name = getName();
       // $category = getCat();
       // $length = getLength();
       // $rented = getRented();
-      // $result = insertVideoData($name, $category, $length, $rented);
-      // // return $result to the requestor
-      
-      // break;
-    // case ('deleteRow'):
-      // // get name from request, delete the row
-      // $name = getName();
-      // $result = deleteRow($name);
-      // // return $result to the requestor
-      // break;
-    // case ('deleteAll'):
-      // // delete all the rows in the database
-      // $result = deleteAllRows($name);
-      // // return $result to the requestor
-
-      // break;
-    // case ('getCategories'):
+      $nextId = getNextId($mysqli);
+      $newName = 'Veggie Tales '.$nextId;
+      $result = insertVideoData($mysqli, $nextId, $newName, 'Family', 90, FALSE);
+      // return $result to the requestor
+      break;
+    case ('deleteRow'):
+      // get id from request, delete the row
+      // $reqId = getId();
+      $result = deleteVideo($mysqli,$reqId);
+      break;
+    case ('deleteAll'):
+      // delete all the rows in the database
+      $result = deleteAllVideoData($mysqli);
+      break;
+    case ('getCategories'):
       // // get the list of distinct categories, return array of categories
-      // $category = getCat();
-      // $result = getDistinctCategories($category);
-      // // stringify the array
-      
-      // // return $result to the requestor (should be array of categories)
-
-      // break;
-    // case ('getVideoList'):
-      // // get categories
-      // $category = getCat();
-      // $result = getVideoListByCategory($category);
-      // // return $result to the requestor (should be array of objects)
-      
-    // default:
-      // echo "<br>SOMETHING WENT TERRIBLY WRONG, unknown request<bre>";
-  // }
-// }
+      $categories = getDistinctCategories($mysqli);
+      for ($ii = 0; $ii < sizeof($categories); $ii++) {
+        echo "<br>List category: ".$categories[$ii];
+      }
+      break;
+    case ('getVideoList'):
+      // get categories
+      $videos = getAllVideos($mysqli);
+      for ($ii = 0; $ii < sizeof($videos); $ii++) {
+        echo "<br>List video names: ".$videos[$ii]['name'];
+      }
+      break;
+    default:
+       echo "<br>SOMETHING WENT TERRIBLY WRONG, unknown request<bre>";
+  }
 
 ?>
