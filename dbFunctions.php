@@ -248,7 +248,6 @@ function getAllVideos($mysqli,$cat) {
   /* Prepared statement, stage 1: prepare */
   if (isset($cat) && !($cat=="All")) {
     $sql = "SELECT id, name, category, length, rented FROM videoLibrary WHERE category=?";
-    $sql = $sql.$cat;
   }
   else {
     $sql = "SELECT id, name, category, length, rented FROM videoLibrary";
@@ -263,14 +262,12 @@ function getAllVideos($mysqli,$cat) {
   
   /* Prepared statement, stage 2: bind and execute */
   if (isset($cat) && !($cat=="All")) {
-    // no parameters to bind
-  }
-  else {
-    if ($stmt->bind_param('s', $cat)) {
+    if (!($stmt->bind_param('s', $cat))) {
       echo "Bind failed: (" . $mysqli->errno . ") " . $mysqli->error;
       return (null);
-    }
+    }    // else no parameters to bind
   }
+  
   if (!$stmt->execute()) {
       //echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
       return (null);

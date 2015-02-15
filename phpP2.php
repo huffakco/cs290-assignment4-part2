@@ -37,7 +37,7 @@ echo "\n<input type=\"button\" name=\"insert\" value=\"Add Video\" onclick=\"han
 echo "\n</form>";
 echo "\n</div>";
 echo "\n<br>";
-echo "\n<div><select id=\"newCategory\">";
+echo "\n<div><select id=\"newCategory\" onchange= \"handleCategorySelection()\" >";
 echo "\n</select>";
 echo "\n</div>";
 
