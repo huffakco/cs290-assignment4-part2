@@ -23,6 +23,14 @@ function ObjList() {
     }
     this.list.pop();
   };
+  
+  this.deleteAllObjFromList = function() {
+    for (var i = 0; i < this.list.length; )
+    {
+      this.list.pop();
+    }
+  };
+  
 }
 
 /* Create the objects to keep track of this page */
@@ -44,7 +52,7 @@ var convertVideosToList = function(req) {
     }
 
     /* Generate the table with results */
-    deleteTable(videoList);
+    deleteTable();
     generate_table(videoList);
 };
 
@@ -193,16 +201,18 @@ function generate_table(arr) {
   }
 }
 
-function deleteTable(obj) {
-  var tableId = document.getElementById('videoTableList');
-  if (tableId)
+function deleteTable() {
+  var tblId = document.getElementById('videoTableList');
+  if ((tblId) && (tblId.rows))
   {
-    for (var i = 0; i < tableId.rows.length; i++) {
-        tableId.deleteRow(i);
+    for (var i = 0; i < tblId.rows.length; ) {
+        tblId.deleteRow(i);
     }
-    tableId.deleteTHead();
+    //Reference
+    // http://stackoverflow.com/questions/2688602/delete-the-entire-table-rendered-from-different-pages-using-javascript
+    tblId.parentNode.removeChild(tblId);
   }
-
+ 
 }
 
 /* Handle updating the Rented status */
@@ -240,7 +250,7 @@ handleDeleteRow = function(idx) {
   videoList.deleteObjFromList(rowId);
   
   // redraw the table from new list because IDs change
-  deleteTable(videoList);
+  deleteTable();
   generate_table(videoList);
   
 };
@@ -248,7 +258,7 @@ handleDeleteRow = function(idx) {
 
 var handleDeleteAll = function() {
   sendRequest("deleteAll");
-  deleteTable(videoList);
+  deleteTable();
 }
 
 var handleInsert = function() {
@@ -262,10 +272,11 @@ var handleInsert = function() {
     if (!category) {
       category = 'unknown';
     } 
-    tmpStr = ['insert=true,name=' + name + ',category=' + category + ',length=' + length];
+    tmpStr = ['insert=true&name=' + name + '&category=' + category + '&length=' + length];
     sendRequest(tmpStr);
+    videoList.deleteAllObjFromList();
     sendRequest('getVideoList');
-    deleteTable(videoList);
+    deleteTable();
     generate_table(videoList);
   }
 }
@@ -285,7 +296,7 @@ function sendRequest(params) {  // params is a stringify'd set of key values
   var http = new XMLHttpRequest();
   var url = "videoLibrary.php";
 
-  http.open("GET", url+"?"+params, true);
+  http.open("GET", url+"?"+params, false);
   http.onreadystatechange = function() {//Call a function when the state changes.
     if(http.readyState == 4 && http.status == 200) {
       alert(http.responseText);
