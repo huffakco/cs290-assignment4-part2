@@ -13,7 +13,7 @@
 //    rented - this is a boolean value indicating if the video is checked in 
 //             or not. It is a required field. When added it should default 
 //             to checked in.
-
+include 'errReport.php';
 
 echo "<!DOCTYPE html>";
 echo "<html>";
@@ -22,16 +22,33 @@ echo "<meta charset='utf-8'>";
 echo "\n<title>Video Log</title>";
 echo "\n<style type=\"text/css\">\ntable, td, th {\nborder: 1px solid #777;\n}";
 echo "\n</style>";
+echo "\n<script src='phpP2.js'></script>";
+echo "\n<link rel=\"stylesheet\" href=\"style.css\">";
 echo "\n</head>";
+
 echo "\n<body>";
-// Thanks to Canvas discussion and OSU 290 video
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
 
+echo "\n<div id=\"newVideo\">";
+echo "\n<form action =\"videoLibrary.php?\" method =\"get\">";
+echo "\n<input type=\"text\" name=\"name\"><label>Name</label><br>";
+echo "\n<input type=\"text\" name=\"category\"><label>Category</label><br>";
+echo "\n<input type=\"number\" name=\"length\"><label>Length</label><br>";
+echo "\n<input type=\"submit\" name=\"insert\" value=\"Add Video\">";
+echo "\n</form>";
+echo "\n</div>";
 
+echo "\n<br>";
+echo "\n<table>";
+generateHeader();
+echo "\n</table>";
+echo "\n<br>";
 
+echo "\n<div><form action =\"videoLibrary.php? method =\"get\">";
 
-function generateHeader($minVal,$val) {
+echo "\n<input type='submit' name='deleteAll' value = 'Delete All Rows'>";
+echo "\n</form></div>";
+
+function generateHeader() {
   echo "\n<thead>";
   echo "\n<tr>";
 
@@ -42,40 +59,41 @@ function generateHeader($minVal,$val) {
   echo "\n<th>length</th>";
   echo "\n<th>status</th>";
   echo "\n<th></th>"; // put delete button in this column
+  echo "\n<th></th>"; // put checkout button in this column
   echo "\n</tr>";
   echo "\n</thead>";
 };
 
 
 // assume an array of each type is passed in
-function generateBody($idArr, $nameArr, $categoryArr, $lengthArr, $statusArr) {
-  echo "\n<tbody>";
+// function generateBody($idArr, $nameArr, $categoryArr, $lengthArr, $statusArr) {
+  // echo "\n<tbody>";
  
-  //creating all cells
-  for ($i = 0; $i < sizeof($idArr) ; $i++) {
-    //creates a table row
-    echo "\n<tr>";
-    //create row
-    echo '<th>'.$idArr[$i].'</th>';
-    echo '<td>'.$nameArr[$i].'</td>';
-    echo '<td>'.$categoryArr[$i].'</td>';
-    echo '<td>'.$lengthArr[$i].'</td>';
-    echo "\n<td><form   >";
-    if ($statusArr[$i] === true) {
-      echo '<button type=\'submit\' id=chk'.$i.' >Check In<\button>';
-    else {
-       echo '<button type=\'submit\' id=chk'.$i.' >Check Out<\button>';
-    }
-    echo "\n</form></td>";
-    echo "\n<td><form   >";
-    echo '<button type=\'submit\' id=row'.$i.' >Delete<\button>';
-    echo "\n</form></td>";
-    // end row
-    echo "\n</tr>";
-  }
-  echo "\n</tbody>";
-};
-
+  // //creating all cells
+  // for ($i = 0; $i < sizeof($idArr) ; $i++) {
+    // //creates a table row
+    // echo "\n<tr>";
+    // //create row
+    // echo '<th>'.$idArr[$i].'</th>';
+    // echo '<td>'.$nameArr[$i].'</td>';
+    // echo '<td>'.$categoryArr[$i].'</td>';
+    // echo '<td>'.$lengthArr[$i].'</td>';
+    // echo "\n<td><form   >";
+    // if ($statusArr[$i] === true) {
+      // echo '<button type=\'submit\' id=chk'.$i.' >Check In<\button>';
+    // else {
+       // echo '<button type=\'submit\' id=chk'.$i.' >Check Out<\button>';
+    // }
+    // echo "\n</form></td>";
+    // echo "\n<td><form   >";
+    // echo '<button type=\'submit\' id=row'.$i.' >Delete<\button>';
+    // echo "\n</form></td>";
+    // // end row
+    // echo "\n</tr>";
+  // }
+  // echo "\n</tbody>";
+// }
+// };
 
 echo "\n</body>";
 echo "\n</html>";

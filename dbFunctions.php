@@ -110,15 +110,15 @@ function getNextId($mysqli) {
     echo "success";
   } else {
     echo "Prepare failed: (" . $mysqli->errno . ") " . $mysqli->error;
-    return (-1);
+    $id = -1;
   }
   
   /* Prepared statement, stage 2: bind and execute */
   // No parameters to bind
 
   if (!$stmt->execute()) {
-      echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
-      return (-1);
+    echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
+    $id = -1;
   } 
   
   // bind result
@@ -126,14 +126,18 @@ function getNextId($mysqli) {
     echo "success";
   } else {
     echo "Bind result failed: (" . $mysqli->errno . ") " . $mysqli->error;
-    return (-1);
+    $id = -1;
   }
   
   // get result
   if (!$stmt->fetch()) {
-      echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
-      return (-1);
+    echo "Fetch failed: (" . $stmt->errno . ") " . $stmt->error;
+    $id = -1;
   } 
+ 
+  if (is_null($id)) {
+    $id = -1;
+  }
  
   echo "<br>ID: ".$id;
   echo "<br>Trying to print stmt...";
@@ -176,6 +180,7 @@ function getDistinctCategories($mysqli) {
   } 
  
   // get result
+  $array = null;
   $idx = 0;
   while ($stmt->fetch()) {
         $array[$idx] = $result;
@@ -219,6 +224,7 @@ function getNames($mysqli) {
   } 
  
   // get result
+  $array = null;
   $idx = 0;
   while ($stmt->fetch()) {
     $array[$idx] = $result;
@@ -264,6 +270,7 @@ function getAllVideos($mysqli) {
   } 
  
   // get result
+  $tmpObj = null;
   $idx = 0;
   while ($stmt->fetch()) {
         $tmpObj[$idx] = array('id'=>$id,'name'=>$name,'category'=>$category,'length'=>$length,'rented'=>$rented);
