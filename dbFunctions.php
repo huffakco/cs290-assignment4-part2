@@ -240,13 +240,20 @@ function getNames($mysqli) {
 
 
 
-function getAllVideos($mysqli) {
+function getAllVideos($mysqli,$cat) {
   // Get the name elements from video Library
   // prepare statement
   //Reference: 
   // /PHP%20%20Prepared%20Statements%20-%20Manual.html
   /* Prepared statement, stage 1: prepare */
-  $sql = "SELECT id, name, category, length, rented FROM videoLibrary";
+  if (isset($cat) && !($cat=="All")) {
+    $sql = "SELECT id, name, category, length, rented FROM videoLibrary WHERE category=?";
+    $sql = $sql.$cat;
+  }
+  else {
+    $sql = "SELECT id, name, category, length, rented FROM videoLibrary";
+  }
+  
   if ($stmt = $mysqli->prepare($sql)) {
     //echo "success";
   } else {
@@ -255,7 +262,15 @@ function getAllVideos($mysqli) {
   }
   
   /* Prepared statement, stage 2: bind and execute */
-  
+  if (isset($cat) && !($cat=="All")) {
+    // no parameters to bind
+  }
+  else {
+    if ($stmt->bind_param('s', $cat)) {
+      echo "Bind failed: (" . $mysqli->errno . ") " . $mysqli->error;
+      return (null);
+    }
+  }
   if (!$stmt->execute()) {
       //echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
       return (null);

@@ -91,6 +91,7 @@ var listCategories = function(categories) {
   for (var i=0; i < categories.length; i++) {
     console.log(categories[i]); 
   }
+  generate_categories(categories);
 }
 
 /* Generate a table around VideoObjList */
@@ -201,6 +202,27 @@ function generate_table(arr) {
   }
 }
 
+
+function generate_categories(arr) {
+  // creates a list of options to select
+  var elementId = document.getElementById('newCategory');
+  var option = document.createElement('option');
+  option.id = 'all';
+  option.text = 'All';
+  elementId.appendChild(option);
+  for (var i = 0; i < arr.length; i++) {
+    var option = document.createElement('option');
+    option.id = arr[i];
+    option.text = arr[i];
+    elementId.appendChild(option);
+  }
+
+}
+
+
+
+
+
 function deleteTable() {
   var tblId = document.getElementById('videoTableList');
   if ((tblId) && (tblId.rows))
@@ -275,7 +297,12 @@ var handleInsert = function() {
     tmpStr = ['insert=true&name=' + name + '&category=' + category + '&length=' + length];
     sendRequest(tmpStr);
     videoList.deleteAllObjFromList();
-    sendRequest('getVideoList');
+    // Reference:
+    // http://www.w3schools.com/jsref/coll_select_options.asp
+    catId = document.getElementById('newCategory');
+    catVal = catId.options[catId.selectedIndex].text;
+    tmpStr = ['getVideoList=' + catVal];
+    sendRequest(tmpStr);
     deleteTable();
     generate_table(videoList);
   }
@@ -284,9 +311,13 @@ var handleInsert = function() {
 
 
 window.onload = function() {
-  sendRequest('getVideoList');
-  console.log('sent Request');
   sendRequest('getCategories');
+  // Reference:
+  // http://www.w3schools.com/jsref/coll_select_options.asp
+  catId = document.getElementById('newCategory');
+  catVal = catId.options[catId.selectedIndex].text;
+  tmpStr = ['getVideoList=' + catVal];
+  sendRequest(tmpStr);
 };
 
 //References:

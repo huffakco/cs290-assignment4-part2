@@ -108,7 +108,7 @@ if($_SERVER['REQUEST_METHOD'] === 'GET') {
         break;
       case ('getVideoList'):
         // get categories
-        $videos = getAllVideos($mysqli);
+        $videos = getAllVideos($mysqli,$val);
         $strArr = null;
         $getStr = "{\"Type\":\"GET\",\"videos\":";
         if (!is_null($videos)) {
