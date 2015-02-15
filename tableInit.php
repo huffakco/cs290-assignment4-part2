@@ -48,9 +48,9 @@ function connectVideoLibrary($myPassword) {
       echo "<br>";
       return(false);
   }
-  echo "<br>Connected successfully!<br>";
-  echo json_encode($mysqli);
-  echo "<br>";
+  //echo "<br>Connected successfully!<br>";
+  //echo json_encode($mysqli);
+  //echo "<br>";
   return($mysqli);
   
 }
@@ -71,11 +71,11 @@ function createTable($mysqli) {
     UNIQUE (
       name)
     )")) {
-      echo "<br>Table Successfully created!<br>";
+      //echo "<br>Table Successfully created!<br>";
     }
   else {
-    echo "table create error: " . $mysqli->errno;
-    echo "<br>";        
+    //echo "table create error: " . $mysqli->errno;
+    //echo "<br>";        
   }
 }
 

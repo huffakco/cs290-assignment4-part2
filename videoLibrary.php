@@ -6,33 +6,32 @@ include 'dbFunctions.php';
 /*********  Interact with the database ***********/
 
 
-echo "Trying to connect...";
+//echo "Trying to connect...";
 
 $mysqli = connectVideoLibrary($myPassword);
-echo "<br>Error code: ";
-echo $mysqli->errno;
-echo "<br>";
+//echo "<br>Error code: ";
+//echo $mysqli->errno;
+//echo "<br>";
 if ($mysqli) {
   createTable($mysqli);
 }
 
 
 if($_SERVER['REQUEST_METHOD'] === 'GET') {
-  $getStr = "{\"Type\":\"GET\",\"parameters\":";
+
   if (isset($_GET) && (sizeof($_GET) > 0)) {
-    if ($_GET["insert"]) {
+    if (isset($_GET["insert"]) && ($_GET["insert"])) {
       $req = "insert";
       $nameR = $_GET["name"];
       $categoryR = $_GET["category"];
       $lengthR = $_GET["length"];
-      $parameters[$nameR] = $nameR;
     }
     else {
       foreach ($_GET as $key => $value) {
         //echo "$key: $value<br>";
         //$getStr = "$getStr\"$key\":\"$value\",";
-        $parameters[$key] = $value;
         $req = $key;
+        //echo $req;
         $val = $value;
       }
     }
@@ -44,11 +43,17 @@ if($_SERVER['REQUEST_METHOD'] === 'GET') {
         //$reqId = getId();
         
         $result = toggleRentedVideo($mysqli, $val, FALSE);
+        $getStr = "{\"Type\":\"GET\",\"result\":";
+        $jsonStr = json_encode($result);
+        echo "$getStr $jsonStr}";
         break;
       case ('checkout'):
         // get name from request, change rented to true
         // $reqId = getId();
         $result = toggleRentedVideo($mysqli, $val, TRUE);
+        $getStr = "{\"Type\":\"GET\",\"result\":";
+        $jsonStr = json_encode($result);
+        echo "$getStr $jsonStr}";
         break;
       case ('getNames'):
         // get the list of video names, return array of names
@@ -58,53 +63,72 @@ if($_SERVER['REQUEST_METHOD'] === 'GET') {
         }
         break;
       case ('insert'):
-        // // insert data provided into database
-        // $name = getName();
-        // $category = getCat();
-        // $length = getLength();
-        // $rented = getRented();
+        // insert data provided into database
         $nextId = getNextId($mysqli);
-        echo "insert params: ".$nextId;
+        //echo "insert params: ".$nextId;
         echo $nameR;
         echo $categoryR;
         echo $lengthR;
         $result = insertVideoData($mysqli, $nextId, $nameR, $categoryR, $lengthR, FALSE);
-        // return $result to the requestor
+        $getStr = "{\"Type\":\"GET\",\"result\":";
+        $jsonStr = json_encode($result);
+        echo "$getStr $jsonStr}";
         break;
       case ('deleteRow'):
         // get id from request, delete the row
         // $reqId = getId();
         $result = deleteVideo($mysqli,$val);
+        $getStr = "{\"Type\":\"GET\",\"result\":";
+        $jsonStr = json_encode($result);
+        echo "$getStr $jsonStr}";
         break;
       case ('deleteAll'):
         // delete all the rows in the database
         $result = deleteAllVideoData($mysqli);
+        $getStr = "{\"Type\":\"GET\",\"result\":";
+        $jsonStr = json_encode($result);
+        echo "$getStr $jsonStr}";
         break;
       case ('getCategories'):
         // // get the list of distinct categories, return array of categories
         $categories = getDistinctCategories($mysqli);
-        for ($ii = 0; $ii < sizeof($categories); $ii++) {
-          echo "<br>List category: ".$categories[$ii];
+        $getStr = "{\"Type\":\"GET\",\"categories\":";
+        if (!is_null($categories)) {
+          for ($ii = 0; $ii < sizeof($categories); $ii++) {
+            //echo "<br>List category: ".$categories[$ii];
+          }
+          $jsonStr = json_encode($categories);
+          echo "$getStr $jsonStr}";  
+          //echo "$jsonStr";  
+        }
+        else {
+          echo "$getStr null}";          
+          //echo "null";          
         }
         break;
       case ('getVideoList'):
         // get categories
         $videos = getAllVideos($mysqli);
-        for ($ii = 0; $ii < sizeof($videos); $ii++) {
-          echo "<br>List video names: ".$videos[$ii]['name'];
+        $strArr = null;
+        $getStr = "{\"Type\":\"GET\",\"videos\":";
+        if (!is_null($videos)) {
+          for ($ii = 0; $ii < sizeof($videos); $ii++) {
+            //echo "<br>List video names: ".$videos[$ii]['name'];
+            $strArr[$ii] = json_encode($videos[$ii]);
+          }
+          $jsonStr = json_encode($strArr);
+          echo "$getStr $jsonStr}";
+        }
+        else {
+          echo "$getStr null}";
         }
         break;
       default:
-         echo "<br>SOMETHING WENT TERRIBLY WRONG, unknown request<bre>";
+         echo "<br>SOMETHING WENT TERRIBLY WRONG, unknown request<br>";
+         echo "request:".$req;
+         echo "value".$val;
     }
-      
-
-    //echo "This is the string: <br>";
-    $jsonStr = json_encode($parameters);
-    echo "$getStr $jsonStr}";
-  }
-  else {
-    echo "$getStr null}";
+ 
   }
 }
 

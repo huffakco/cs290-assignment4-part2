@@ -13,11 +13,10 @@ function VideoObject(params) {
 }
 
 /* use to store array of Video Objects indexed by id*/
-function VideoObjList() {
+function ObjList() {
   this.list = new Array();
-  this.rtype;
 
-  this.deleteVideoObjFromList = function(id) {
+  this.deleteObjFromList = function(id) {
     for (var i = id; i < this.list.length; i++)
     {
       this.list[i] = this.list[i + 1];
@@ -26,137 +25,148 @@ function VideoObjList() {
   };
 }
 
-var convertVideosToList = function(req, obj) {
-    /* define HTTP response as a JavaScript object */
-    var testJSON = JSON.parse(req.responseText);
-    console.log(testJSON);
-    /* search for html_url, description,  */
-    /* language under files.file name object.language */
-    /* if description is empty set to "generic gist" */
-    for (var i = 0; i < testJSON.length; i++)
+/* Create the objects to keep track of this page */
+var videoList = new ObjList; // track videos currently displayed
+var reqList = new ObjList; // track requests
+
+var convertVideosToList = function(req) {
+    for (var i = 0; i < req.length; i++)
     {
-      /*Reference: */
- /* https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for...in */
-      for (var prop in testJSON[i]) {
-        if (prop === 'name')
-        {
-          var name = testJSON[i].name;
-        }
-        if (prop === 'category')
-        {
-          var category = testJSON[i].category;
-        }
-        if (prop === 'id')
-        {
-          var id = testJSON[i].id;
-        }
-        if (prop === 'length')
-        {
-          var length = testJSON[i].length;
-        }
-        if (prop === 'rented')
-        {
-          var rented = testJSON[i].rented;
-        }
-      }
-      if (!(name))
-      {
-          var name = 'unknown';
-      }
-      if (!(id))
-      {
-          var id = '12';
-      }
-      if (!(category))
-      {
-          var category = 'unknown';
-      }
-      if (!(length))
-      {
-          var length = '0';
-      }
-      if (!(rented))
-      {
-          var rented = 'FALSE';
-      }
+      var testJSON = JSON.parse(req[i]);
+      console.log(testJSON);
+      var newVideoObj = new VideoObject({ id: testJSON.id,
+                                name: testJSON.name,
+                                category: testJSON.category,
+                                length: testJSON.length,
+                                rented: testJSON.rented});
 
-      var newVideoObj = new VideoObject({ id: id,
-                                name: name,
-                                category: category,
-                                length: length,
-                                rented: rented});
-
- 
-      obj.list.push(newVideoObj);
+      videoList.list.push(newVideoObj);
     }
 
     /* Generate the table with results */
-    deleteTable(obj);
-    generate_table(obj);
+    deleteTable(videoList);
+    generate_table(videoList);
 };
 
+var handleResponse = function(req) {
+  var testJSON = JSON.parse(req);
+  if (testJSON) {
+    console.log(testJSON);  
+    for (var prop in testJSON) {
+      if (prop === 'result') {
+        var result = testJSON.result;
+        if (!(result)) {
+          errorFunction('Result was false');
+          return;
+        }
+      }
+      if (prop === 'categories') {
+        var categories = testJSON.categories;
+        listCategories(categories);
+        return;
+      }
+      if (prop === 'videos') {
+        var videos = testJSON.videos;
+        convertVideosToList(videos);
+        return;
+      }
+    }
+  }
+  
+};
 
+var errorFunction = function(str) {
+  console.log(str);
+};
 
-/* Create the objects to keep track of this page */
-var videoList = new VideoObjList;
-
+var listCategories = function(categories) {
+  for (var i=0; i < categories.length; i++) {
+    console.log(categories[i]); 
+  }
+}
 
 /* Generate a table around VideoObjList */
 /* Reference: */
 /* https://developer.mozilla.org/en-US/docs/Traversing_an_HTML_table_with_JavaScript_and_DOM_Interfaces */
 function generate_table(arr) {
   // creates a <table> element and a <tbody> element
-  var elementId = document.getElementById(arr.listId);
+  var elementId = document.getElementById('videoTable');
   var tbl = document.createElement('table');
-  tbl.id = [arr.listId + 'Table'];
-  tblID = [arr.listName + 'Table'];
+  tbl.id = 'videoTableList';
+
   var tblHeader = document.createElement('thead');
-  var tblBody = document.createElement('tbody');
-
-  // Define header row
   var row = document.createElement('tr');
-
-  // Define header elements
+  var tblHead0 = document.createElement('th');
+  tblHead0.innerHTML = 'Id';
+  row.appendChild(tblHead0);
   var tblHead1 = document.createElement('th');
-  tblHead1.innerHTML = arr.listStr;
+  tblHead1.innerHTML = 'Name';
   row.appendChild(tblHead1);
-
   var tblHead2 = document.createElement('th');
-  tblHead2.innerHTML = 'Language';
+  tblHead2.innerHTML = 'Category';
   row.appendChild(tblHead2);
-
   var tblHead3 = document.createElement('th');
-  tblHead3.innerHTML = 'Description';
+  tblHead3.innerHTML = 'Length';
   row.appendChild(tblHead3);
+  var tblHead4 = document.createElement('th');
+  tblHead4.innerHTML = 'Rented';  
+  row.appendChild(tblHead4);
+  var tblHead5 = document.createElement('th');
+  tblHead5.innerHTML = 'Delete';  
+  row.appendChild(tblHead5); 
   tblHeader.appendChild(row);
-
-  tblHeader.appendChild(row);
+ 
+  var tblBody = document.createElement('tbody');
 
   // creating all cells
   for (var i = 0; i < arr.list.length; i++) {
     // creates a table row
     var row = document.createElement('tr');
+    row.id = ['row'+i];
      // Create a <td> element and a text node, make the text
       // node the contents of the <td>, and put the <td> at
       // the end of the table row
+    var cell0 = document.createElement('td');
+    var cellName0 = document.createTextNode(arr.list[i].id);
     var cell1 = document.createElement('td');
-    var cellChkBox = document.createElement('input');
-    cellChkBox.type = 'checkbox';
-    cellChkBox.id = [arr.listName + i];
-    cellChkBox.checked = false;
+    var cellName1 = document.createTextNode(arr.list[i].name);
     var cell2 = document.createElement('td');
-    var cellName = document.createTextNode(arr.list[i].name);
+    var cellName2 = document.createTextNode(arr.list[i].category);
     var cell3 = document.createElement('td');
-    var listLink = document.createElement('a');
-    listLink.id = [arr.listName + 'lnk_' + i];
-    listLink.href = arr.list[i].url;
-    listLink.innerText = arr.list[i].description;
-    cell1.appendChild(cellChkBox);
-    cell2.appendChild(cellName);
-    cell3.appendChild(listLink);
+    var cellName3 = document.createTextNode(arr.list[i].length);
+    var cell4 = document.createElement('td');
+    var cellChkBox = document.createElement('input');
+
+    cellChkBox.type = 'button';
+    cellChkBox.id = ['chk'+i];
+    cellChkBox.checked = false;
+    if (arr.list[i].rented) {
+      cellChkBox.value = "Check In";
+    }
+    else {
+      cellChkBox.value = "Check Out";
+   }
+
+    var cell5 = document.createElement('td');
+    var cellDelete = document.createElement('input');
+
+    cellDelete.type = 'button';
+    cellDelete.id = ['del' + i];
+    cellDelete.value = "Delete";
+   
+    cell0.appendChild(cellName0);
+    cell1.appendChild(cellName1);
+    cell2.appendChild(cellName2);
+    cell3.appendChild(cellName3);
+    cell4.appendChild(cellChkBox);
+    cell5.appendChild(cellDelete);
+    
+    row.appendChild(cell0);
     row.appendChild(cell1);
     row.appendChild(cell2);
     row.appendChild(cell3);
+    row.appendChild(cell4);
+    row.appendChild(cell5);
 
     // add the row to the end of the table body
     tblBody.appendChild(row);
@@ -165,43 +175,39 @@ function generate_table(arr) {
   // put the <tbody> in the <table>
   tbl.appendChild(tblHeader);
   tbl.appendChild(tblBody);
-   // appends <table> into <body>
+  // appends <table> into <body>
   elementId.appendChild(tbl);
-  // sets the border attribute of tbl to 2;
-  //tbl.setAttribute("border", "2");
 
   // add event listener to checkbox and link
   for (var i = 0; i < arr.list.length; i++) {
-    var cellChkBoxId = document.getElementById([arr.listName + i]);
-    if (arr.listId === 'searchResults') {
-        cellChkBoxId.onclick = handleChkBoxSearch;
-    } else {
-        cellChkBoxId.onclick = handleChkBoxFavorites;
-    }
-    var linkClickId = document.getElementById([arr.listName + 'lnk_' + i]);
-    linkClickId.ondblclick = linkClickId.href;
+    var cellChkBoxId = document.getElementById(['chk' + i]);
+    var linkClickId = document.getElementById(['del' + i]);
+    //rowIdName = ['row'+i];
+    //tmpStr = "handleCheckedRow('"+ ['row'+i] + "')";
+    cellChkBoxId.onclick = function() {this.checked=true; handleCheckedRow();}
+   // cellChkBoxId.onclick = tmpStr;
+   // cellChkBoxId.onclick = eval(tmpStr);
+    linkClickId.ondblclick = handleDeleteRow;
   }
 }
 
 function deleteTable(obj) {
-  elementId = document.getElementById(obj.listId);
-  var tableId = document.getElementById([obj.listId + 'Table']);
+  var tableId = document.getElementById('videoTableList');
   if (tableId)
   {
     for (var i = 0; i < tableId.rows.length; i++) {
         tableId.deleteRow(i);
     }
     tableId.deleteTHead();
-    elementId.innerHTML = '';
   }
-  elementId.innerHTML = '';
+
 }
 
-getCheckedListItem = function(objList) {
+getCheckedListItem = function(objList,listName) {
   var idx = -1;
   for (var i = 0; i < objList.list.length; i++)
   {
-    var id = document.getElementById([objList.listName + i]);
+    var id = document.getElementById([listName + i]);
     if (id.checked)
     {
       idx = i;
@@ -210,40 +216,34 @@ getCheckedListItem = function(objList) {
   return (idx);
 };
 
-/* Handle updating the Search and moving to favorites */
-handleChkBoxSearch = function() {
+
+/* Handle updating the Rented status */
+handleCheckedRow = function() {
   /* Find the checked item */
-  var idx = getCheckedListItem(gist);
-  if (idx >= 0)
-  {
-    /* Add item to favorites (indexed in gist object) */
-    var tmpObj = new HtmlObject({
-        name: gist.list[idx].name,
-        description: gist.list[idx].description,
-        url: gist.list[idx].url,
-        gistId: gist.list[idx].gistId});
-    favor.list.push(tmpObj);
-
-    /* Resave favorites */
-    saveLocalSearch();
-
-    /* Remove item from gist list */
-    gist.removeHtmlObjFromList(idx);
-
-    /* Remove old favorites table */
-    deleteTable(favor);
-
-    /* Update favorites table */
-    generate_table(favor);
-
-    /* Update search table */
-    deleteTable(gist);
-    generate_table(gist);
+  rowId = getCheckedListItem(videoList,'chk');
+  console.log(rowId);
+  //rowId = idx.substring(3,idx.length);
+  //var id = videoList.list[idx].id;
+  var buttonId = document.getElementById(['chk'+rowId]);
+  //table.deleteRow(id);
+  console.log(rowId);
+  if (videoList.list[rowId].rented) {
+    tmpStr = 'checkin=' + videoList.list[rowId].id;
+    sendRequest(tmpStr);
+    buttonId.value = "Check Out";
+    videoList.list[rowId].rented = false;
   }
+  else {
+   tmpStr = 'checkout=' + videoList.list[rowId].id;
+   sendRequest(tmpStr);
+   buttonId.value = "Check In";
+   videoList.list[rowId].rented = true;
+  }
+
 };
 
 /* Handle removing from the favorites */
-handleChkBoxFavorites = function() {
+handleDeleteRow = function() {
   /* Find the checked item */
   /* Find the checked item */
   var idx = getCheckedListItem(favor);
@@ -261,16 +261,17 @@ handleChkBoxFavorites = function() {
   }
 };
 
+var handleDeleteAll = function() {
+  sendRequest("deleteAll");
+  deleteTable(videoList);
+}
+
+
 window.onload = function() {
-  sendRequest("'getVideoList':'Get All'");
+  sendRequest("getVideoList");
   console.log("sent Request");
+  sendRequest("getCategories");
 };
-
-
-
-
-$urlStr = 'videoLibrary.php';
-
 
 //References:
 // http://stackoverflow.com/questions/9713058/sending-post-data-with-a-xmlhttprequest
@@ -283,98 +284,9 @@ function sendRequest(params) {  // params is a stringify'd set of key values
   http.onreadystatechange = function() {//Call a function when the state changes.
     if(http.readyState == 4 && http.status == 200) {
       alert(http.responseText);
+      handleResponse(http.responseText);
     }
   }
   http.send(null);
-}
-
- 
-// var url = "videoLibrary.php";
-// var params = "lorem=ipsum&name=binny";
-// http.open("POST", url, true);
-
-// //Send the proper header information along with the request
-// http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-// http.setRequestHeader("Content-length", params.length);
-// http.setRequestHeader("Connection", "close");
-
-// http.onreadystatechange = function() {//Call a function when the state changes.
-    // if(http.readyState == 4 && http.status == 200) {
-        // alert(http.responseText);
-    // }
-// }
-// http.send(params);
-
-
-
-/* Object to manage the list of pages */
-function VideoList() {
-  this.reqPages = new Array;
-
-  this.loadGistPages = function() {
-    /* empty previous results - new request */
-    this.reqPages.length = 0;
-    gist.list.length = 0; /* empty list of previous results */
-
-    /* search requests for each page */
-    searchParams.page = document.getElementsByName('page_input')[0].value;
-    for (var i = 0; i < searchParams.page; i++)
-    {
-      var nextReq = new GistPage(i + 1);
-      this.reqPages.push(nextReq);
-      console.log(this.reqPages[i].httpRequest);
-    }
-  };
-}
-
-/* Object to manage a request for a specific Gist page */
- function videoRequest(pageNum) {
-   this.httpRequest = new XMLHttpRequest();
-   this.page = pageNum;
-
-   if (!this.httpRequest) {
-      throw 'unable to create HttpRequest.';
-    }
-    // Copied from Nickolas Jurczak on Canvas Discussion
-    // Setup the URL to make the request
-    this.baseurl = 'https://api.github.com/gists/public';
-    this.url = this.baseurl + '?page=' + pageNum + '&per_page=30';
-
-    /* Reference: */
-    /* https://developer.mozilla.org/en-US/docs/AJAX/Getting_Started */
-    /* function that will handle processing the response */
-    this.httpRequest.onreadystatechange = function() {
-      /* function to handle the request response */
-              /* check the response code */
-
-      if ((!(this) || (this === 'null')))
-      {
-          console.log('onreadystatechange called but undefined or null');
-      }
-      else {
-        if (this.status === 200) {
-
-          if (this.readyState === 4) {
-              // everything is good, the response is received
-              //console.log(this.responseText);
-
-              /* Add to list of HtmlObjects */
-              convertGistPageToList(this, gist);
-          } else {
-            console.log('onreadystatechange called but not ready');
-          }
-        }
-        else
-        {
-            console.log('onreadystatechange called but not status = 200');
-        }
-      }
-    };
-
-    // make and send the request
-    this.httpRequest.open('GET', this.url);
-    // Example URL calls from assignment input:
-    //httpRequest.open('GET','http://api.github.com/gists/public');
-    //  httpRequest.open('GET','https://developer.github.com/v3/gists/#list-gists');
-    this.httpRequest.send();
+  return(http);
 }

@@ -38,31 +38,17 @@ echo "\n</form>";
 echo "\n</div>";
 
 echo "\n<br>";
-echo "\n<table>";
-generateHeader();
-echo "\n</table>";
+echo "\n<div id='videoTable'>";
+//generateHeader();
+echo "\n</div>";
 echo "\n<br>";
 
-echo "\n<div><form action =\"videoLibrary.php? method =\"get\">";
-
-echo "\n<input type='submit' name='deleteAll' value = 'Delete All Rows'>";
+//echo "\n<div><form action =\"videoLibrary.php? method =\"get\">";
+echo "\n<div><form>";
+echo "\n<input type='submit' name='deleteAll' onclick='handleDeleteAll()' value = 'Delete All Rows'>";
 echo "\n</form></div>";
 
-function generateHeader() {
-  echo "\n<thead>";
-  echo "\n<tr>";
 
-  // Create header elements for each database parameter
-  echo "\n<th>id</th>";
-  echo "\n<th>name</th>";
-  echo "\n<th>category</th>";
-  echo "\n<th>length</th>";
-  echo "\n<th>status</th>";
-  echo "\n<th></th>"; // put delete button in this column
-  echo "\n<th></th>"; // put checkout button in this column
-  echo "\n</tr>";
-  echo "\n</thead>";
-};
 
 
 // assume an array of each type is passed in

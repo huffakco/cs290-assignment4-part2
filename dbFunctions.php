@@ -20,14 +20,14 @@ include 'errReport.php';
   
  // Copied query from Brian Lamere OSU CS290 Canvas Discussion Board
  function deleteAllVideoData($mysqli) {
-    echo "<br>Trying to delete all rows...<br>";
+    //echo "<br>Trying to delete all rows...<br>";
     $sql = "DELETE FROM videoLibrary WHERE 1";
     if ($mysqli->query($sql)) {
-      echo "success";
+      //echo "success";
       return (true);
     }
     else {
-      echo "Delete failed: (" . $mysqli->errno . ") " . $mysqli->error;
+      //echo "Delete failed: (" . $mysqli->errno . ") " . $mysqli->error;
     }
     return (false);
 }
@@ -41,18 +41,18 @@ function insertVideoData($mysqli, $id, $name, $category, $length, $rented) {
   /* Prepared statement, stage 1: prepare */
 
   if (!($stmt = $mysqli->prepare("INSERT INTO videoLibrary(id, name,category,length,rented) VALUES (?,?,?,?,?)"))) {
-    echo "Prepare failed: (" . $mysqli->errno . ") " . $mysqli->error;
+    //echo "Prepare failed: (" . $mysqli->errno . ") " . $mysqli->error;
     return (false);
   }
   
   /* Prepared statement, stage 2: bind and execute */
   if (!$stmt->bind_param("issii", $id,$name, $category, $length, $rented)) {
-    echo "Binding parameters failed: (" . $stmt->errno . ") " . $stmt->error;
+    //echo "Binding parameters failed: (" . $stmt->errno . ") " . $stmt->error;
     return (false);
   }
 
   if (!$stmt->execute()) {
-    echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
+    //echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
     return (false);
   }
   
@@ -62,7 +62,7 @@ function insertVideoData($mysqli, $id, $name, $category, $length, $rented) {
 }
 
 function toggleRentedVideo($mysqli, $id, $rented) {
-    echo "<br>Trying to update rented...<br>";
+    //echo "<br>Trying to update rented...<br>";
 
     // SQL syntax:
     // UPDATE table_name
@@ -77,11 +77,11 @@ function toggleRentedVideo($mysqli, $id, $rented) {
     
     $sql = "UPDATE videoLibrary SET rented=".$rented." WHERE id=".$id;
     if ($mysqli->query($sql)) {
-      echo "success";
+      //echo "success";
       return (true);
     }
     else {
-      echo "Delete failed: (" . $mysqli->errno . ") " . $mysqli->error;
+      //echo "Delete failed: (" . $mysqli->errno . ") " . $mysqli->error;
       return (false);
     } 
 }
@@ -107,9 +107,9 @@ function getNextId($mysqli) {
   // /PHP%20%20Prepared%20Statements%20-%20Manual.html
   /* Prepared statement, stage 1: prepare */
   if ($stmt = $mysqli->prepare($sql)) {
-    echo "success";
+    //echo "success";
   } else {
-    echo "Prepare failed: (" . $mysqli->errno . ") " . $mysqli->error;
+    //echo "Prepare failed: (" . $mysqli->errno . ") " . $mysqli->error;
     $id = -1;
   }
   
@@ -117,21 +117,21 @@ function getNextId($mysqli) {
   // No parameters to bind
 
   if (!$stmt->execute()) {
-    echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
+    //echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
     $id = -1;
   } 
   
   // bind result
   if ($stmt->bind_result($id)) {
-    echo "success";
+    //echo "success";
   } else {
-    echo "Bind result failed: (" . $mysqli->errno . ") " . $mysqli->error;
+    //echo "Bind result failed: (" . $mysqli->errno . ") " . $mysqli->error;
     $id = -1;
   }
   
   // get result
   if (!$stmt->fetch()) {
-    echo "Fetch failed: (" . $stmt->errno . ") " . $stmt->error;
+    //echo "Fetch failed: (" . $stmt->errno . ") " . $stmt->error;
     $id = -1;
   } 
  
@@ -139,10 +139,10 @@ function getNextId($mysqli) {
     $id = -1;
   }
  
-  echo "<br>ID: ".$id;
-  echo "<br>Trying to print stmt...";
-  echo json_encode($stmt);
-  echo "<br>";  
+  //echo "<br>ID: ".$id;
+  //echo "<br>Trying to print stmt...";
+  //echo json_encode($stmt);
+  //echo "<br>";  
   
   // explicit close of prepared statement
   $stmt->close();
@@ -160,22 +160,22 @@ function getDistinctCategories($mysqli) {
   /* Prepared statement, stage 1: prepare */
   $sql = "SELECT DISTINCT category FROM videoLibrary";
   if ($stmt = $mysqli->prepare($sql)) {
-    echo "success";
+    //echo "success";
   } else {
-    echo "Prepare failed: (" . $mysqli->errno . ") " . $mysqli->error;
+    //echo "Prepare failed: (" . $mysqli->errno . ") " . $mysqli->error;
     return (null);
   }
   
   /* Prepared statement, stage 2: bind and execute */
   
   if (!$stmt->execute()) {
-      echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
+      //echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
       return (null);
   } 
   
   // bind result
   if (!($stmt->bind_result($result))) {
-      echo "Bind result failed: (" . $stmt->errno . ") " . $stmt->error;
+      //echo "Bind result failed: (" . $stmt->errno . ") " . $stmt->error;
       return (null);
   } 
  
@@ -184,7 +184,7 @@ function getDistinctCategories($mysqli) {
   $idx = 0;
   while ($stmt->fetch()) {
         $array[$idx] = $result;
-        echo "<br>Result:" . $result;
+        //echo "<br>Result:" . $result;
         $idx++;
   }
  
@@ -202,24 +202,24 @@ function getNames($mysqli) {
   /* Prepared statement, stage 1: prepare */
   $sql = "SELECT name FROM videoLibrary";
   if ($stmt = $mysqli->prepare($sql)) {
-    echo "success";
+    //echo "success";
   } else {
-    echo "Prepare failed: (" . $mysqli->errno . ") " . $mysqli->error;
+    //echo "Prepare failed: (" . $mysqli->errno . ") " . $mysqli->error;
     return (null);
   }
   
   /* Prepared statement, stage 2: bind and execute */
   
   if (!$stmt->execute()) {
-    echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
+    //echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
     result (null);
   } 
   
   // bind result
   if ($stmt->bind_result($result)) {
-    echo "success";
+    //echo "success";
   } else {
-    echo "Bind result failed: (" . $mysqli->errno . ") " . $mysqli->error;
+    //echo "Bind result failed: (" . $mysqli->errno . ") " . $mysqli->error;
     return (null);
   } 
  
@@ -228,7 +228,7 @@ function getNames($mysqli) {
   $idx = 0;
   while ($stmt->fetch()) {
     $array[$idx] = $result;
-    echo "<br>Result:" . $result;
+    //echo "<br>Result:" . $result;
     $idx++;
   }
  
@@ -248,24 +248,24 @@ function getAllVideos($mysqli) {
   /* Prepared statement, stage 1: prepare */
   $sql = "SELECT id, name, category, length, rented FROM videoLibrary";
   if ($stmt = $mysqli->prepare($sql)) {
-    echo "success";
+    //echo "success";
   } else {
-    echo "Prepare failed: (" . $mysqli->errno . ") " . $mysqli->error;
+    //echo "Prepare failed: (" . $mysqli->errno . ") " . $mysqli->error;
     return (null);
   }
   
   /* Prepared statement, stage 2: bind and execute */
   
   if (!$stmt->execute()) {
-      echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
+      //echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
       return (null);
   } 
   
   // bind result
   if ($stmt->bind_result($id,$name,$category,$length,$rented)) {
-    echo "success";
+    //echo "success";
   } else {
-    echo "Bind result failed: (" . $mysqli->errno . ") " . $mysqli->error;
+    //echo "Bind result failed: (" . $mysqli->errno . ") " . $mysqli->error;
     return (null);
   } 
  
@@ -274,7 +274,7 @@ function getAllVideos($mysqli) {
   $idx = 0;
   while ($stmt->fetch()) {
         $tmpObj[$idx] = array('id'=>$id,'name'=>$name,'category'=>$category,'length'=>$length,'rented'=>$rented);
-        echo "<br>Result:" . $name;
+        //echo "<br>Result:" . $name;
         $idx++;
   }
  
@@ -286,14 +286,14 @@ function getAllVideos($mysqli) {
   
  // Copied query from Brian Lamere OSU CS290 Canvas Discussion Board
  function deleteVideo($mysqli,$id) {
-    echo "<br>Delete id = $id<br>";
+    //echo "<br>Delete id = $id<br>";
     $sql = "DELETE FROM videoLibrary WHERE id=$id";
     if ($mysqli->query($sql)) {
-      echo "success";
+      //echo "success";
       return (true);
     }
     else {
-      echo "Delete failed: (" . $mysqli->errno . ") " . $mysqli->error;
+      //echo "Delete failed: (" . $mysqli->errno . ") " . $mysqli->error;
       return (false);
     }
 }
