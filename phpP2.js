@@ -184,10 +184,12 @@ function generate_table(arr) {
     var linkClickId = document.getElementById(['del' + i]);
     //rowIdName = ['row'+i];
     //tmpStr = "handleCheckedRow('"+ ['row'+i] + "')";
-    cellChkBoxId.onclick = function() {this.checked=true; handleCheckedRow();}
-   // cellChkBoxId.onclick = tmpStr;
-   // cellChkBoxId.onclick = eval(tmpStr);
-    linkClickId.ondblclick = handleDeleteRow;
+    cellChkBoxId.onclick = function() {
+             handleCheckedRow(this.id);
+            };
+    linkClickId.ondblclick = function() {
+             handleDeleteRow(this.id);
+            };
   }
 }
 
@@ -203,30 +205,12 @@ function deleteTable(obj) {
 
 }
 
-getCheckedListItem = function(objList,listName) {
-  var idx = -1;
-  for (var i = 0; i < objList.list.length; i++)
-  {
-    var id = document.getElementById([listName + i]);
-    if (id.checked)
-    {
-      idx = i;
-    }
-  }
-  return (idx);
-};
-
-
 /* Handle updating the Rented status */
-handleCheckedRow = function() {
+handleCheckedRow = function(idx) {
   /* Find the checked item */
-  rowId = getCheckedListItem(videoList,'chk');
+  rowId = idx.substring(3,idx.length);
   console.log(rowId);
-  //rowId = idx.substring(3,idx.length);
-  //var id = videoList.list[idx].id;
-  var buttonId = document.getElementById(['chk'+rowId]);
-  //table.deleteRow(id);
-  console.log(rowId);
+  var buttonId = document.getElementById(idx);
   if (videoList.list[rowId].rented) {
     tmpStr = 'checkin=' + videoList.list[rowId].id;
     sendRequest(tmpStr);
@@ -239,38 +223,59 @@ handleCheckedRow = function() {
    buttonId.value = "Check In";
    videoList.list[rowId].rented = true;
   }
-
 };
 
 /* Handle removing from the favorites */
-handleDeleteRow = function() {
+handleDeleteRow = function(idx) {
   /* Find the checked item */
-  /* Find the checked item */
-  var idx = getCheckedListItem(favor);
-  if (idx >= 0)
-  {
-    /* Remove item from favorites */
-    favor.removeHtmlObjFromList(idx);
-
-    /* Resave favorites */
-    saveLocalSearch();
-
-    /* Update favorites table */
-    deleteTable(favor);
-    generate_table(favor);
-  }
+  var rowId = idx.substring(3,idx.length);
+  var rowIdStr = ['row' + rowId];
+  console.log(rowId);
+  //Reference
+  // http://stackoverflow.com/questions/4967223/javascript-delete-a-row-from-a-table-by-id
+  var row = document.getElementById(rowIdStr);
+  row.parentNode.removeChild(row);
+  tmpStr = 'deleteRow=' + videoList.list[rowId].id;
+  sendRequest(tmpStr);
+  videoList.deleteObjFromList(rowId);
+  
+  // redraw the table from new list because IDs change
+  deleteTable(videoList);
+  generate_table(videoList);
+  
 };
+
 
 var handleDeleteAll = function() {
   sendRequest("deleteAll");
   deleteTable(videoList);
 }
 
+var handleInsert = function() {
+  var name = document.getElementsByName('name')[0].value;
+  var category = document.getElementsByName('category')[0].value;
+  var length = document.getElementsByName('length')[0].value;
+
+  if ((!name) || (name.length < 1)) {
+    alert("Enter a name!");
+  } else {
+    if (!category) {
+      category = 'unknown';
+    } 
+    tmpStr = ['insert=true,name=' + name + ',category=' + category + ',length=' + length];
+    sendRequest(tmpStr);
+    sendRequest('getVideoList');
+    deleteTable(videoList);
+    generate_table(videoList);
+  }
+}
+
+
 
 window.onload = function() {
-  sendRequest("getVideoList");
-  console.log("sent Request");
-  sendRequest("getCategories");
+  sendRequest('getVideoList');
+  console.log('sent Request');
+  sendRequest('getCategories');
 };
 
 //References:

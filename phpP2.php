@@ -29,11 +29,12 @@ echo "\n</head>";
 echo "\n<body>";
 
 echo "\n<div id=\"newVideo\">";
-echo "\n<form action =\"videoLibrary.php?\" method =\"get\">";
+//echo "\n<form action =\"videoLibrary.php?\" method =\"get\">";
+echo "\n<form>";
 echo "\n<input type=\"text\" name=\"name\"><label>Name</label><br>";
 echo "\n<input type=\"text\" name=\"category\"><label>Category</label><br>";
 echo "\n<input type=\"number\" name=\"length\"><label>Length</label><br>";
-echo "\n<input type=\"submit\" name=\"insert\" value=\"Add Video\">";
+echo "\n<input type=\"button\" name=\"insert\" value=\"Add Video\" onclick=\"handleInsert()\">";
 echo "\n</form>";
 echo "\n</div>";
 
