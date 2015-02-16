@@ -23,14 +23,14 @@ function ObjList() {
     }
     this.list.pop();
   };
-  
+
   this.deleteAllObjFromList = function() {
     for (var i = 0; i < this.list.length; )
     {
       this.list.pop();
     }
   };
-  
+
 }
 
 /* Create the objects to keep track of this page */
@@ -59,12 +59,13 @@ var convertVideosToList = function(req) {
 var handleResponse = function(req) {
   var testJSON = JSON.parse(req);
   if (testJSON) {
-    console.log(testJSON);  
+    console.log(testJSON);
     for (var prop in testJSON) {
       if (prop === 'result') {
         var result = testJSON.result;
         if (!(result)) {
-          alert('Operation failed, most likely the Name is not unique, try again!');
+          alert(
+          'Operation failed, most likely the Name is not unique, try again!');
           return;
         }
       }
@@ -80,15 +81,15 @@ var handleResponse = function(req) {
       }
     }
   }
-  
+
 };
 
 var listCategories = function(categories) {
-  for (var i=0; i < categories.length; i++) {
-    console.log(categories[i]); 
+  for (var i = 0; i < categories.length; i++) {
+    console.log(categories[i]);
   }
   generate_categories(categories);
-}
+};
 
 /* Generate a table around VideoObjList */
 /* Reference: */
@@ -115,20 +116,20 @@ function generate_table(arr) {
     tblHead3.innerHTML = 'Length';
     row.appendChild(tblHead3);
     var tblHead4 = document.createElement('th');
-    tblHead4.innerHTML = 'Rented (click)';  
+    tblHead4.innerHTML = 'Rented (click)';
     row.appendChild(tblHead4);
     var tblHead5 = document.createElement('th');
-    tblHead5.innerHTML = 'Delete (double click)';  
-    row.appendChild(tblHead5); 
+    tblHead5.innerHTML = 'Delete (double click)';
+    row.appendChild(tblHead5);
     tblHeader.appendChild(row);
-   
+
     var tblBody = document.createElement('tbody');
 
     // creating all cells
     for (var i = 0; i < arr.list.length; i++) {
       // creates a table row
       var row = document.createElement('tr');
-      row.id = ['row'+i];
+      row.id = ['row' + i];
        // Create a <td> element and a text node, make the text
         // node the contents of the <td>, and put the <td> at
         // the end of the table row
@@ -144,13 +145,13 @@ function generate_table(arr) {
       var cellChkBox = document.createElement('input');
 
       cellChkBox.type = 'button';
-      cellChkBox.id = ['chk'+i];
+      cellChkBox.id = ['chk' + i];
       cellChkBox.checked = false;
       if (arr.list[i].rented) {
-        cellChkBox.value = "Checked Out";
+        cellChkBox.value = 'Checked Out';
       }
       else {
-        cellChkBox.value = "Available";
+        cellChkBox.value = 'Available';
      }
 
       var cell5 = document.createElement('td');
@@ -158,15 +159,15 @@ function generate_table(arr) {
 
       cellDelete.type = 'button';
       cellDelete.id = ['del' + i];
-      cellDelete.value = "Delete";
-     
+      cellDelete.value = 'Delete';
+
       cell0.appendChild(cellName0);
       cell1.appendChild(cellName1);
       cell2.appendChild(cellName2);
       cell3.appendChild(cellName3);
       cell4.appendChild(cellChkBox);
       cell5.appendChild(cellDelete);
-      
+
       row.appendChild(cell0);
       row.appendChild(cell1);
       row.appendChild(cell2);
@@ -241,25 +242,25 @@ function deleteTable() {
     // http://stackoverflow.com/questions/2688602/delete-the-entire-table-rendered-from-different-pages-using-javascript
     tblId.parentNode.removeChild(tblId);
   }
- 
+
 }
 
 /* Handle updating the Rented status */
 handleCheckedRow = function(idx) {
   /* Find the checked item */
-  rowId = idx.substring(3,idx.length);
+  rowId = idx.substring(3, idx.length);
   console.log(rowId);
   var buttonId = document.getElementById(idx);
   if (videoList.list[rowId].rented) {
     tmpStr = 'checkin=' + videoList.list[rowId].id;
     sendRequest(tmpStr);
-    buttonId.value = "Checked Out";
+    buttonId.value = 'Checked Out';
     videoList.list[rowId].rented = false;
   }
   else {
    tmpStr = 'checkout=' + videoList.list[rowId].id;
    sendRequest(tmpStr);
-   buttonId.value = "Available";
+   buttonId.value = 'Available';
    videoList.list[rowId].rented = true;
   }
 };
@@ -267,7 +268,7 @@ handleCheckedRow = function(idx) {
 /* Handle removing from the favorites */
 handleDeleteRow = function(idx) {
   /* Find the checked item */
-  var rowId = idx.substring(3,idx.length);
+  var rowId = idx.substring(3, idx.length);
   var rowIdStr = ['row' + rowId];
   console.log(rowId);
   //Reference
@@ -277,7 +278,7 @@ handleDeleteRow = function(idx) {
   tmpStr = 'deleteRow=' + videoList.list[rowId].id;
   sendRequest(tmpStr);
   videoList.deleteObjFromList(rowId);
-  
+
   // redraw the table from new list because IDs change
   deleteCategories();
   sendRequest('getCategories');
@@ -287,11 +288,11 @@ handleDeleteRow = function(idx) {
 
 
 var handleDeleteAll = function() {
-  sendRequest("deleteAll");
+  sendRequest('deleteAll');
   deleteTable();
   deleteCategories();
   sendRequest('getCategories');
-}
+};
 
 var handleInsert = function() {
   var name = document.getElementsByName('name')[0].value;
@@ -299,17 +300,18 @@ var handleInsert = function() {
   var length = document.getElementsByName('length')[0].value;
 
   if ((!name) || (name.length < 1)) {
-    alert("Enter a Name!");
+    alert('Enter a Name!');
   } else {
     if ((length) && (length < 0)) {
-      alert("Length must be a positive integer!");
+      alert('Length must be a positive integer!');
     }
     else {
-    
+
       if (!category) {
         category = 'unknown';
       }
-      tmpStr = ['insert=true&name=' + name + '&category=' + category + '&length=' + length];
+      tmpStr = ['insert=true&name=' + name +
+                '&category=' + category + '&length=' + length];
       sendRequest(tmpStr);
       videoList.deleteAllObjFromList();
       deleteCategories();
@@ -324,7 +326,7 @@ var handleInsert = function() {
       generate_table(videoList);
     }
   }
-}
+};
 
 handleCategorySelection = function() {
   videoList.deleteAllObjFromList();
@@ -336,7 +338,7 @@ handleCategorySelection = function() {
   sendRequest(tmpStr);
   deleteTable();
   generate_table(videoList);
-}
+};
 
 
 window.onload = function() {
@@ -345,7 +347,7 @@ window.onload = function() {
   // http://www.w3schools.com/jsref/coll_select_options.asp
   catId = document.getElementById('newCategory');
   catVal = catId.options[catId.selectedIndex].text;
-  tmpStr = ['getVideoList=' + catVal ];
+  tmpStr = ['getVideoList=' + catVal];
   sendRequest(tmpStr);
 };
 
@@ -354,15 +356,15 @@ window.onload = function() {
 // http://www.openjs.com/articles/ajax_xmlhttp_using_post.php
 function sendRequest(params) {  // params is a stringify'd set of key values
   var http = new XMLHttpRequest();
-  var url = "videoLibrary.php";
+  var url = 'videoLibrary.php';
 
-  http.open("GET", url+"?"+params, false);
-  http.onreadystatechange = function() {//Call a function when the state changes.
-    if(http.readyState == 4 && http.status == 200) {
+  http.open('GET', url + '?' + params, false);
+  http.onreadystatechange = function() {//Call a function when the state changes
+    if (http.readyState == 4 && http.status == 200) {
       //alert(http.responseText);
       handleResponse(http.responseText);
     }
-  }
+  };
   http.send(null);
-  return(http);
+  return (http);
 }

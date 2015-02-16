@@ -1,0 +1,89 @@
+Start: Mon, 9 Feb 2015 06:17:00 -0800
+End: Mon, 9 Feb 2015 06:53:00 -0800 
+Tasks: created starting php file using the multtable.php 
+as a starting point. Not Online!
+
+Start: Tue, 10 Feb 2015 06:17:42 -0800
+End: Tue, 10 Feb 2015 06:59:42 -0800 
+Tasks: Add some sql functionality.  Not Online!
+
+Start: Tue, 10 Feb 2015 21:00:00 -0800
+End: Tue, 10 Feb 2015 22:10:00 -0800 
+Tasks: Started developing  pieces of the video interaction.
+tableInit not connecting to the database.
+
+Start: Wed, 11 Feb 2015 06:17:06 -0800
+End: Wed, 11 Feb 2015 06:26:06 -0800 
+Tasks: start work on videoLibrary
+ 
+Start: Wed, 11 Feb 2015 06:26:06 -0800
+End: Wed, 11 Feb 2015 07:09:39 -0800 
+Tasks: started videoLibrary to handle database requests based 
+on http requests made to the page
+
+Start: Wed, 11 Feb 2015 16:30:00 -0800 
+End: Wed, 11 Feb 2015 17:31:21 -0800 
+Tasks: More work on creating data base interaction file. Not Online!
+
+Start: Wed, 11 Feb 2015 21:00:00 -0800
+End: Wed, 11 Feb 2015 22:09:27 -0800 
+Tasks: Connect to the database prototype insert function
+
+Start: Sat, 14 Feb 2015 09:00:00 -0800
+End: Sat, 14 Feb 2015 11:34:46 -0800 
+Tasks: Working on tableInit with database query functions.
+
+Start: Sat, 14 Feb 2015 11:34:46 -0800
+End: Sat, 14 Feb 2015 12:18:02 -0800 
+Tasks: Database queries complete in tableInit
+
+Start: Sat, 14 Feb 2015 12:18:02 -0800
+End: Sat, 14 Feb 2015 12:45:39 -0800 
+Tasks: Move db functions into separate dbFunctions table, 
+moved test code to videoLibrary
+
+Start: Sat, 14 Feb 2015 12:45:39 -0800
+End: Sat, 14 Feb 2015 13:53:35 -0800 
+Tasks: Added return results to db functions, added switch 
+statement in videoLibrary to handle requests
+
+Start: Sat, 14 Feb 2015 13:53:35 -0800
+End: Sat, 14 Feb 2015 17:23:33 -0800 
+Tasks: Saving interim point in connecting php, js and database
+
+Start: Sat, 14 Feb 2015 19:00:00 -0800
+End: Sun, 15 Feb 2015 03:00:00 -0800 
+Tasks: Started hooking together the js and php parts. Totally 
+stuck trying to create buttons in the dynamic table.
+
+Start: Sun, 15 Feb 2015 09:45:00 -0800
+End: Sun, 15 Feb 2015 09:52:06 -0800 
+Tasks: Buttons in table don't work.  Commented out php echo 
+except for request response.  Saving work from last night.
+
+Start: Sun, 15 Feb 2015 09:52:06 -0800
+End: Sun, 15 Feb 2015 10:48:49 -0800 
+Tasks: Finally figured out the pesky buttons.  Added 
+functionality to insert button
+
+Start: Sun, 15 Feb 2015 10:48:49 -0800
+End: Sun, 15 Feb 2015 11:32:57 -0800 
+Tasks: Fixed problem with deleting table on display
+
+Start: Sun, 15 Feb 2015 11:32:57 -0800
+End: Sun, 15 Feb 2015 12:17:08 -0800 
+Tasks: Started work on categories
+
+Start: Sun, 15 Feb 2015 14:45:00 -0800
+End: Sun, 15 Feb 2015 15:43:33 -0800 
+Tasks: Added category selection and bug fixes
+
+Start: Sun, 15 Feb 2015 15:43:33 -0800
+End: Sun, 15 Feb 2015 16:11:57 -0800 
+Tasks: Fixed final issues with bad insert data
+
+Start: Sun, 15 Feb 2015 16:11:57 -0800 
+End: Sun, 15 Feb 2015 16:38:00 -0800 
+Tasks: Fixed gjslint errors. validated generated html. Created
+log off git log.  Added template file for password configuration.
+
