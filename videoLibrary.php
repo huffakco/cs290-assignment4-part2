@@ -66,9 +66,9 @@ if($_SERVER['REQUEST_METHOD'] === 'GET') {
         // insert data provided into database
         $nextId = getNextId($mysqli);
         //echo "insert params: ".$nextId;
-        echo $nameR;
-        echo $categoryR;
-        echo $lengthR;
+        //echo $nameR;
+        //echo $categoryR;
+        //echo $lengthR;
         $result = insertVideoData($mysqli, $nextId, $nameR, $categoryR, $lengthR, FALSE);
         $getStr = "{\"Type\":\"GET\",\"result\":";
         $jsonStr = json_encode($result);

@@ -64,7 +64,7 @@ var handleResponse = function(req) {
       if (prop === 'result') {
         var result = testJSON.result;
         if (!(result)) {
-          alert('Operation failed, try again!');
+          alert('Operation failed, most likely the Name is not unique, try again!');
           return;
         }
       }
@@ -147,10 +147,10 @@ function generate_table(arr) {
       cellChkBox.id = ['chk'+i];
       cellChkBox.checked = false;
       if (arr.list[i].rented) {
-        cellChkBox.value = "Check In";
+        cellChkBox.value = "Checked Out";
       }
       else {
-        cellChkBox.value = "Check Out";
+        cellChkBox.value = "Available";
      }
 
       var cell5 = document.createElement('td');
@@ -253,13 +253,13 @@ handleCheckedRow = function(idx) {
   if (videoList.list[rowId].rented) {
     tmpStr = 'checkin=' + videoList.list[rowId].id;
     sendRequest(tmpStr);
-    buttonId.value = "Check Out";
+    buttonId.value = "Checked Out";
     videoList.list[rowId].rented = false;
   }
   else {
    tmpStr = 'checkout=' + videoList.list[rowId].id;
    sendRequest(tmpStr);
-   buttonId.value = "Check In";
+   buttonId.value = "Available";
    videoList.list[rowId].rented = true;
   }
 };
@@ -301,22 +301,28 @@ var handleInsert = function() {
   if ((!name) || (name.length < 1)) {
     alert("Enter a Name!");
   } else {
-    if (!category) {
-      category = 'unknown';
+    if ((length) && (length < 0)) {
+      alert("Length must be a positive integer!");
     }
-    tmpStr = ['insert=true&name=' + name + '&category=' + category + '&length=' + length];
-    sendRequest(tmpStr);
-    videoList.deleteAllObjFromList();
-    deleteCategories();
-    sendRequest('getCategories');
-    // Reference:
-    // http://www.w3schools.com/jsref/coll_select_options.asp
-    catId = document.getElementById('newCategory');
-    catVal = catId.options[catId.selectedIndex].text;
-    tmpStr = ['getVideoList=' + catVal];
-    sendRequest(tmpStr);
-    deleteTable();
-    generate_table(videoList);
+    else {
+    
+      if (!category) {
+        category = 'unknown';
+      }
+      tmpStr = ['insert=true&name=' + name + '&category=' + category + '&length=' + length];
+      sendRequest(tmpStr);
+      videoList.deleteAllObjFromList();
+      deleteCategories();
+      sendRequest('getCategories');
+      // Reference:
+      // http://www.w3schools.com/jsref/coll_select_options.asp
+      catId = document.getElementById('newCategory');
+      catVal = catId.options[catId.selectedIndex].text;
+      tmpStr = ['getVideoList=' + catVal];
+      sendRequest(tmpStr);
+      deleteTable();
+      generate_table(videoList);
+    }
   }
 }
 
@@ -353,7 +359,7 @@ function sendRequest(params) {  // params is a stringify'd set of key values
   http.open("GET", url+"?"+params, false);
   http.onreadystatechange = function() {//Call a function when the state changes.
     if(http.readyState == 4 && http.status == 200) {
-      alert(http.responseText);
+      //alert(http.responseText);
       handleResponse(http.responseText);
     }
   }
